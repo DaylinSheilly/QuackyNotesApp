@@ -21,13 +21,6 @@ jobs:
     - name: 'Checkout repository'
       uses: actions/checkout@v2
       
-    - name: 'Install Dependencies'
-      run: |
-        ls
-        npm install
-
-    - name: 'Run Tests'
-      run: npm run test 
   sonarcloud:
     name: SonarCloud
     runs-on: ubuntu-latest
@@ -36,10 +29,10 @@ jobs:
         with:
           fetch-depth: 0 
       - name: Install dependencies
-        run:  cd frontend && npm install
+        run:  cd web && npm install
       - name: Install Jest globally
-        run:  cd frontend && sudo npm install -g jest
-      - name: Run Tests
+        run:  cd web && sudo npm install -g jest
+      - name: Run Test
         run:  cd web && npm run test && npm run coverage
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
