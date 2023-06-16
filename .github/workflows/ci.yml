@@ -9,45 +9,41 @@ on:
       - main
 
 jobs:
-
   test:
     name: 'Run unit tests'
+    runs-on: ubuntu-latest
     defaults:
       run:
         shell: bash
         working-directory: ./web
-
-    runs-on: ubuntu-latest
-
+      
     steps:
-    - uses: actions/checkout@v2
-      name: 'Checkout repository'
+    - name: 'Checkout repository'
+      uses: actions/checkout@v2
       
     - name: 'Install Dependencies'
       run: |
         ls
         npm install
-      timeout-minutes: 5
-      
+
+    - name: 'Run Tests'
+      run: npm run test 
   sonarcloud:
     name: SonarCloud
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-
-      - name: 'Run Tests'
-        run: npm run test 
-
-      - name: 'Run coverage'
-        run: npm run coverage
-
-      - name: 'Run sonarqube'
-        run: npm run sonnar-scanner
-
+          fetch-depth: 0 
+      - name: Install dependencies
+        run:  cd frontend && npm install
+      - name: Install Jest globally
+        run:  cd frontend && sudo npm install -g jest
+      - name: Run Tests
+        run:  cd web && npm run test && npm run coverage
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
